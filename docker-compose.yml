@@ -1,0 +1,61 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - certs-volume:/data
+      - caddy_config:/config
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data portainer/portainer
+
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    volumes:
+      - ./uptime-kuma:/app/data
+
+  sonar-qube:
+    image: hub4rpi64/sonarqube:8.3.1.34397
+    environment:
+      SONARQUBE_JDBC_URL: jdbc:postgresql://db:5432/sonarDbName
+      SONARQUBE_JDBC_USERNAME: sonarDbUsername
+      SONARQUBE_JDBC_PASSWORD: sonarDbPassword
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    depends_on:
+      - sonar-db
+      
+  sonar-db:
+    image: postgres:13.2
+    environment:
+      POSTGRES_USER: sonarDbUsername
+      POSTGRES_PASSWORD: sonarDbPassword
+      POSTGRES_DB: sonarDb
+    
+
+volumes:
+  certs-volume:
+  caddy_config:
+  portainer_data:
+
+  sonarqube_conf:
+
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_bundled-plugins:
+  postgresql:
+  postgresql_data:

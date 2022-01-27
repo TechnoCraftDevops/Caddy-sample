@@ -1,0 +1,12 @@
+portainer.mydomain.com {
+    reverse_proxy http://portainer:9000
+}
+
+
+kuma.mydomain.com {
+    reverse_proxy http://uptime-kuma:3001
+}
+
+sonar.mydomain.com {
+    reverse_proxy http://sonar-qube:9000
+}
